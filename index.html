@@ -2,131 +2,2624 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sorveteria — Demonstração</title>
+<meta name="viewport" content="width=1080, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Açaí do Forte — Autoatendimento</title>
+
 <style>
-  *{box-sizing:border-box}
-  body{margin:0;font-family:Inter,Arial,sans-serif;background:#f7f3ef;color:#3d2b24}
-  .app{max-width:1100px;margin:auto;min-height:100vh;background:#fff}
-  header{padding:22px 28px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}
-  .logo{font-size:25px;font-weight:800;color:#b54f45}.cart{background:#f5e4df;padding:10px 15px;border-radius:20px;font-weight:700}
-  .content{padding:32px}
-  h1{margin:0 0 8px;font-size:34px}.subtitle{color:#806e66;margin-bottom:28px}
-  .products{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-  .product{border:1px solid #eee;border-radius:20px;padding:18px;background:#fff;box-shadow:0 5px 18px #0000000b;cursor:pointer;transition:.2s}
-  .product:hover{transform:translateY(-3px);box-shadow:0 10px 25px #00000012}
-  .icecream{height:170px;border-radius:16px;background:linear-gradient(145deg,#fff1e8,#f6d4c9);display:flex;align-items:center;justify-content:center;font-size:90px}
-  .product h3{margin:15px 0 5px}.product p{margin:0;color:#8b7971}.price{display:block;margin-top:12px;font-weight:800;font-size:18px}
-  .screen{display:none}.screen.active{display:block}
-  .back{border:0;background:none;color:#a64a42;font-weight:700;cursor:pointer;padding:0;margin-bottom:20px;font-size:15px}
-  .box{border:1px solid #eee;border-radius:20px;padding:24px;margin-bottom:18px}
-  .box h2{margin:0 0 5px}.hint{color:#85736b;font-size:14px;margin-bottom:18px}
-  .options{display:grid;gap:10px}
-  .option{display:flex;align-items:center;justify-content:space-between;padding:15px;border:1px solid #e8e0dc;border-radius:13px}
-  .option:hover{background:#faf6f3}.option-left{display:flex;gap:12px;align-items:center;font-weight:600}
-  .controls{display:flex;align-items:center;gap:8px}
-  .controls button{width:30px;height:30px;border:1px solid #d8cbc5;background:#fff;border-radius:8px;font-size:20px;line-height:1;cursor:pointer}
-  .controls button:hover{background:#f5e8e3}
-  .qty{min-width:20px;text-align:center}
-  .badge{font-size:12px;background:#e7f5e9;color:#397441;padding:5px 9px;border-radius:10px;font-weight:700;margin-right:4px}
-  .summary{position:sticky;bottom:0;background:white;border-top:1px solid #eee;padding:18px 0;display:flex;justify-content:space-between;align-items:center}
-  .total small{display:block;color:#8b7971}.total strong{font-size:25px}
-  .btn{background:#b54f45;color:white;border:0;border-radius:13px;padding:14px 22px;font-weight:800;font-size:16px;cursor:pointer}
-  .note{background:#fff8e9;border:1px solid #f3dfad;padding:13px 15px;border-radius:12px;font-size:14px;color:#765c25;margin-top:14px}
-  @media(max-width:750px){.products{grid-template-columns:1fr}.content{padding:20px}header{padding:18px 20px}}
+
+:root{
+  --wine:#8f0057;
+  --wine2:#b0006e;
+  --purple:#63345d;
+  --cream:#fff6e6;
+  --cream2:#f8ead3;
+  --text:#321f2d;
+  --muted:#7e6a78;
+  --glass:rgba(255,255,255,.72);
+  --line:rgba(80,35,70,.12);
+  --shadow:0 20px 55px rgba(57,22,49,.16);
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Arial,sans-serif;
+  color:var(--text);
+  background:var(--cream);
+}
+
+button,input,textarea{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+  border:0;
+}
+
+.hidden{
+  display:none!important;
+}
+
+/* =========================================================
+   TOTEM
+========================================================= */
+
+#app{
+  width:100vw;
+  height:100vh;
+  min-width:320px;
+  min-height:568px;
+  position:relative;
+  overflow:hidden;
+
+  background:
+    radial-gradient(
+      circle at 90% 10%,
+      rgba(255,255,255,.9),
+      transparent 24%
+    ),
+    linear-gradient(
+      135deg,
+      #fff9ed 0%,
+      #f7ead9 100%
+    );
+}
+
+/* =========================================================
+   TELA DE DESCANSO
+========================================================= */
+
+#idleScreen{
+  position:absolute;
+  inset:0;
+  z-index:100;
+
+  background:
+    #fff4df
+    url("assets/banner-descanso.jpg")
+    center/cover
+    no-repeat;
+
+  transition:
+    transform .85s cubic-bezier(.22,.8,.2,1),
+    opacity .5s;
+
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+}
+
+#idleScreen::after{
+  content:"";
+
+  position:absolute;
+  inset:0;
+
+  background:
+    linear-gradient(
+      to bottom,
+      transparent 55%,
+      rgba(55,0,37,.16) 100%
+    );
+
+  pointer-events:none;
+}
+
+.idleHint{
+  position:relative;
+  z-index:2;
+
+  margin-bottom:55px;
+
+  padding:18px 34px;
+
+  border-radius:999px;
+
+  background:rgba(255,255,255,.55);
+
+  border:
+    1px solid
+    rgba(255,255,255,.8);
+
+  box-shadow:
+    0 12px 35px
+    rgba(50,0,35,.15);
+
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+
+  font-size:25px;
+  font-weight:800;
+
+  color:#5e1850;
+
+  animation:pulse 2s infinite;
+}
+
+#idleScreen.open{
+  transform:translateY(-100%);
+  opacity:0;
+  pointer-events:none;
+}
+
+@keyframes pulse{
+
+  50%{
+    transform:scale(1.025);
+  }
+
+}
+
+/* =========================================================
+   CABEÇALHO
+========================================================= */
+
+.topbar{
+  height:145px;
+
+  padding:12px 24px;
+
+  display:flex;
+  align-items:center;
+
+  background:rgba(255,255,255,.76);
+
+  border-bottom:
+    1px solid
+    var(--line);
+
+  backdrop-filter:blur(22px);
+  -webkit-backdrop-filter:blur(22px);
+
+  position:relative;
+  z-index:5;
+}
+
+.topbar img{
+  width:100%;
+  height:100%;
+
+  object-fit:contain;
+  object-position:left center;
+}
+
+.cartBtn{
+  margin-left:auto;
+
+  min-width:150px;
+  height:76px;
+
+  padding:0 24px;
+
+  border-radius:26px;
+
+  color:white;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--wine),
+      var(--wine2)
+    );
+
+  box-shadow:
+    0 14px 28px
+    rgba(143,0,87,.22);
+
+  font-size:23px;
+  font-weight:850;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  gap:10px;
+}
+
+.cartCount{
+  background:white;
+
+  color:var(--wine);
+
+  min-width:32px;
+  height:32px;
+
+  border-radius:50%;
+
+  display:inline-flex;
+
+  align-items:center;
+  justify-content:center;
+}
+
+/* =========================================================
+   MENU
+========================================================= */
+
+#menuScreen{
+  position:absolute;
+  inset:0;
+
+  display:flex;
+  flex-direction:column;
+
+  opacity:0;
+
+  transform:translateY(30px);
+
+  transition:.65s ease;
+
+  pointer-events:none;
+}
+
+#menuScreen.visible{
+  opacity:1;
+
+  transform:none;
+
+  pointer-events:auto;
+}
+
+.content{
+  flex:1;
+
+  display:flex;
+
+  min-height:0;
+}
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar{
+  width:235px;
+
+  padding:20px 14px;
+
+  background:
+    rgba(255,255,255,.62);
+
+  border-right:
+    1px solid
+    var(--line);
+
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+
+  overflow:auto;
+}
+
+.sideTitle{
+  font-size:16px;
+
+  font-weight:900;
+
+  color:var(--muted);
+
+  padding:
+    6px 10px 14px;
+
+  text-transform:uppercase;
+
+  letter-spacing:.08em;
+}
+
+.cat{
+  width:100%;
+
+  padding:18px 14px;
+
+  margin-bottom:8px;
+
+  border-radius:20px;
+
+  text-align:left;
+
+  background:transparent;
+
+  color:var(--purple);
+
+  font-weight:800;
+
+  font-size:18px;
+
+  transition:.2s;
+}
+
+.cat.active{
+  background:
+    rgba(143,0,87,.12);
+
+  color:var(--wine);
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(143,0,87,.08);
+}
+
+.cat:active{
+  transform:scale(.98);
+}
+
+/* =========================================================
+   PRODUTOS
+========================================================= */
+
+.productsArea{
+  flex:1;
+
+  padding:25px 28px;
+
+  overflow:auto;
+}
+
+.sectionHead{
+  display:flex;
+
+  align-items:end;
+
+  justify-content:space-between;
+
+  margin-bottom:20px;
+}
+
+.sectionHead h1{
+  font-size:35px;
+
+  margin:
+    0 0 5px;
+
+  font-weight:900;
+
+  letter-spacing:-.03em;
+}
+
+.sectionHead p{
+  margin:0;
+
+  color:var(--muted);
+
+  font-size:17px;
+}
+
+.grid{
+  display:grid;
+
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+
+  gap:18px;
+}
+
+.product{
+  min-height:270px;
+
+  padding:18px;
+
+  border-radius:28px;
+
+  background:var(--glass);
+
+  border:
+    1px solid
+    rgba(255,255,255,.9);
+
+  box-shadow:var(--shadow);
+
+  backdrop-filter:blur(22px);
+  -webkit-backdrop-filter:blur(22px);
+
+  transition:.2s;
+
+  display:flex;
+  flex-direction:column;
+}
+
+.product:active{
+  transform:scale(.985);
+}
+
+.productVisual{
+  height:145px;
+
+  border-radius:22px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  font-size:90px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #fff,
+      #f1d8e7
+    );
+
+  box-shadow:
+    inset 0 1px
+    rgba(255,255,255,.8);
+}
+
+.product h3{
+  font-size:22px;
+
+  margin:
+    14px 0 4px;
+}
+
+.product p{
+  font-size:15px;
+
+  color:var(--muted);
+
+  margin:0;
+
+  line-height:1.35;
+}
+
+.productBottom{
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  margin-top:auto;
+
+  padding-top:12px;
+}
+
+.price{
+  font-size:22px;
+
+  font-weight:900;
+
+  color:var(--wine);
+}
+
+.addMini{
+  width:48px;
+  height:48px;
+
+  border-radius:17px;
+
+  background:var(--wine);
+
+  color:#fff;
+
+  font-size:28px;
+
+  font-weight:700;
+}
+
+/* =========================================================
+   MODAL GLASS
+========================================================= */
+
+.overlay{
+  position:fixed;
+
+  inset:0;
+
+  background:
+    rgba(42,10,32,.34);
+
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+
+  z-index:30;
+
+  display:flex;
+
+  align-items:flex-end;
+
+  justify-content:center;
+
+  opacity:0;
+
+  pointer-events:none;
+
+  transition:.35s;
+}
+
+.overlay.show{
+  opacity:1;
+
+  pointer-events:auto;
+}
+
+.sheet{
+  width:min(100%,900px);
+
+  max-height:92vh;
+
+  overflow:auto;
+
+  background:
+    rgba(255,251,245,.91);
+
+  border:
+    1px solid
+    rgba(255,255,255,.95);
+
+  border-radius:
+    38px 38px 0 0;
+
+  box-shadow:
+    0 -25px 80px
+    rgba(40,0,30,.22);
+
+  padding:28px;
+
+  transform:translateY(100%);
+
+  transition:
+    .45s
+    cubic-bezier(.22,.8,.2,1);
+
+  backdrop-filter:blur(30px);
+  -webkit-backdrop-filter:blur(30px);
+}
+
+.overlay.show .sheet{
+  transform:none;
+}
+
+.handle{
+  width:62px;
+  height:6px;
+
+  border-radius:9px;
+
+  background:#d4c3cd;
+
+  margin:
+    0 auto 22px;
+}
+
+.sheetTop{
+  display:flex;
+
+  justify-content:space-between;
+
+  gap:20px;
+}
+
+.sheetVisual{
+  width:180px;
+  height:160px;
+
+  border-radius:28px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #fff,
+      #efd8e8
+    );
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  font-size:90px;
+
+  flex:none;
+}
+
+.close{
+  width:48px;
+  height:48px;
+
+  border-radius:50%;
+
+  background:#eee3e8;
+
+  color:var(--purple);
+
+  font-size:25px;
+}
+
+.sheet h2{
+  font-size:32px;
+
+  margin:
+    4px 0 8px;
+}
+
+.sheetDesc{
+  color:var(--muted);
+
+  font-size:17px;
+
+  line-height:1.45;
+}
+
+.priceLarge{
+  font-size:25px;
+
+  font-weight:900;
+
+  color:var(--wine);
+
+  margin-top:12px;
+}
+
+/* =========================================================
+   COMPLEMENTOS
+========================================================= */
+
+.optionBox{
+  margin-top:24px;
+
+  padding:20px;
+
+  border-radius:26px;
+
+  background:
+    rgba(255,255,255,.68);
+
+  border:
+    1px solid
+    var(--line);
+}
+
+.optionTitle{
+  font-size:21px;
+
+  font-weight:900;
+
+  margin-bottom:5px;
+}
+
+.optionHint{
+  font-size:14px;
+
+  color:var(--muted);
+
+  margin-bottom:13px;
+}
+
+.optRow{
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  padding:13px 0;
+
+  border-bottom:
+    1px solid
+    var(--line);
+}
+
+.optRow:last-child{
+  border-bottom:0;
+}
+
+.optName{
+  font-weight:750;
+
+  font-size:17px;
+}
+
+.qty{
+  display:flex;
+
+  align-items:center;
+
+  gap:10px;
+}
+
+.qty button{
+  width:38px;
+  height:38px;
+
+  border-radius:13px;
+
+  background:#eee4e9;
+
+  color:var(--purple);
+
+  font-size:24px;
+}
+
+.qty b{
+  width:24px;
+
+  text-align:center;
+}
+
+.badge{
+  font-size:11px;
+
+  font-weight:900;
+
+  color:#24714a;
+
+  background:#dff3e6;
+
+  border-radius:9px;
+
+  padding:5px 7px;
+
+  margin-right:7px;
+}
+
+/* =========================================================
+   RODAPÉ DO PRODUTO
+========================================================= */
+
+.sheetFooter{
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:15px;
+
+  margin-top:22px;
+
+  position:sticky;
+
+  bottom:0;
+
+  padding-top:12px;
+
+  background:
+    linear-gradient(
+      transparent,
+      rgba(255,251,245,.96) 25%
+    );
+}
+
+.primary{
+  background:
+    linear-gradient(
+      135deg,
+      var(--wine),
+      var(--wine2)
+    );
+
+  color:#fff;
+
+  border-radius:19px;
+
+  padding:17px 24px;
+
+  font-size:18px;
+
+  font-weight:900;
+
+  box-shadow:
+    0 12px 25px
+    rgba(143,0,87,.2);
+}
+
+/* =========================================================
+   CARRINHO
+========================================================= */
+
+.cartSheet{
+  max-height:94vh;
+}
+
+.cartItem{
+  display:flex;
+
+  align-items:center;
+
+  gap:14px;
+
+  padding:15px 0;
+
+  border-bottom:
+    1px solid
+    var(--line);
+}
+
+.cartEmoji{
+  width:64px;
+  height:64px;
+
+  border-radius:18px;
+
+  background:#f0deea;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  font-size:34px;
+}
+
+.cartInfo{
+  flex:1;
+}
+
+.cartInfo strong{
+  font-size:17px;
+}
+
+.cartInfo small{
+  display:block;
+
+  color:var(--muted);
+
+  margin-top:4px;
+}
+
+.cartPrice{
+  font-weight:900;
+
+  color:var(--wine);
+}
+
+/* =========================================================
+   OBSERVAÇÃO
+========================================================= */
+
+.formLabel{
+  display:block;
+
+  font-weight:900;
+
+  font-size:17px;
+
+  margin:
+    20px 0 9px;
+}
+
+textarea{
+  width:100%;
+
+  min-height:90px;
+
+  resize:none;
+
+  padding:15px;
+
+  border-radius:18px;
+
+  border:
+    1px solid
+    var(--line);
+
+  background:
+    rgba(255,255,255,.75);
+
+  outline:none;
+
+  color:var(--text);
+}
+
+/* =========================================================
+   COMER AQUI / LEVAR
+========================================================= */
+
+.choiceGrid{
+  display:grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:12px;
+}
+
+.choice{
+  padding:17px;
+
+  border-radius:19px;
+
+  background:
+    rgba(255,255,255,.65);
+
+  border:
+    1px solid
+    var(--line);
+
+  font-weight:900;
+
+  color:var(--purple);
+
+  font-size:17px;
+}
+
+.choice.selected{
+  border:
+    2px solid
+    var(--wine);
+
+  background:
+    rgba(143,0,87,.09);
+
+  color:var(--wine);
+}
+
+/* =========================================================
+   PAGAMENTO
+========================================================= */
+
+.payGrid{
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap:12px;
+}
+
+.pay{
+  padding:18px 8px;
+
+  border-radius:19px;
+
+  background:
+    rgba(255,255,255,.7);
+
+  border:
+    1px solid
+    var(--line);
+
+  font-weight:900;
+
+  text-align:center;
+}
+
+.pay.selected{
+  border:
+    2px solid
+    var(--wine);
+
+  color:var(--wine);
+
+  background:
+    rgba(143,0,87,.08);
+}
+
+/* =========================================================
+   ETAPAS
+========================================================= */
+
+.stepBar{
+  display:flex;
+
+  gap:6px;
+
+  margin-bottom:17px;
+}
+
+.step{
+  height:5px;
+
+  flex:1;
+
+  border-radius:9px;
+
+  background:#dfd1d9;
+}
+
+.step.on{
+  background:var(--wine);
+}
+
+.confirm{
+  width:100%;
+
+  padding:19px;
+
+  border-radius:20px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--wine),
+      var(--wine2)
+    );
+
+  color:white;
+
+  font-size:19px;
+
+  font-weight:900;
+
+  margin-top:22px;
+}
+
+.backBtn{
+  background:none;
+
+  color:var(--wine);
+
+  font-weight:900;
+
+  font-size:16px;
+
+  padding:0;
+
+  margin-bottom:16px;
+}
+
+/* =========================================================
+   CONFIRMAÇÃO
+========================================================= */
+
+.success{
+  position:fixed;
+
+  inset:0;
+
+  z-index:80;
+
+  background:
+    linear-gradient(
+      145deg,
+      #fff8eb,
+      #f5e3ee
+    );
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  text-align:center;
+
+  padding:40px;
+
+  opacity:0;
+
+  pointer-events:none;
+
+  transition:.4s;
+}
+
+.success.show{
+  opacity:1;
+
+  pointer-events:auto;
+}
+
+.successCard{
+  max-width:720px;
+
+  padding:45px;
+
+  border-radius:42px;
+
+  background:
+    rgba(255,255,255,.72);
+
+  border:
+    1px solid #fff;
+
+  box-shadow:var(--shadow);
+
+  backdrop-filter:blur(25px);
+  -webkit-backdrop-filter:blur(25px);
+}
+
+.check{
+  width:105px;
+  height:105px;
+
+  margin:auto;
+
+  border-radius:50%;
+
+  background:#dff3e6;
+
+  color:#25824f;
+
+  font-size:60px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+}
+
+.success h2{
+  font-size:40px;
+
+  margin:
+    25px 0 8px;
+}
+
+.success p{
+  font-size:19px;
+
+  color:var(--muted);
+
+  line-height:1.5;
+}
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media(max-width:750px){
+
+  .topbar{
+    height:90px;
+  }
+
+  .sidebar{
+    width:150px;
+  }
+
+  .cat{
+    font-size:14px;
+
+    padding:14px 9px;
+  }
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .productsArea{
+    padding:18px;
+  }
+
+  .sectionHead h1{
+    font-size:28px;
+  }
+
+  .product{
+    min-height:240px;
+  }
+
+  .productVisual{
+    height:120px;
+  }
+
+  .sheet{
+    padding:20px;
+  }
+
+  .sheetVisual{
+    width:130px;
+    height:120px;
+    font-size:65px;
+  }
+}
+
 </style>
 </head>
+
 <body>
-<div class="app">
-<header><div class="logo">🍦 Doce Neve</div><div class="cart">🛒 Carrinho <span id="cartCount">0</span></div></header>
 
-<main class="content">
-<section id="productsScreen" class="screen active">
-  <h1>Escolha seu sorvete</h1>
-  <div class="subtitle">Selecione uma opção para personalizar seu pedido.</div>
-  <div class="products">
-    <div class="product" onclick="openOptions('Açaí na Tigela',18)">
-      <div class="icecream">🍧</div><h3>Açaí na Tigela</h3><p>300 ml</p><span class="price">R$ 18,00</span>
-    </div>
-    <div class="product" onclick="openOptions('Sorvete 2 Bolas',16)">
-      <div class="icecream">🍨</div><h3>Sorvete 2 Bolas</h3><p>Escolha seus sabores</p><span class="price">R$ 16,00</span>
-    </div>
-    <div class="product" onclick="openOptions('Milkshake',22)">
-      <div class="icecream">🥤</div><h3>Milkshake</h3><p>500 ml</p><span class="price">R$ 22,00</span>
-    </div>
+<div id="app">
+
+<!-- =====================================================
+     TELA DE DESCANSO
+===================================================== -->
+
+<section id="idleScreen">
+
+  <div class="idleHint">
+    👆 Toque na tela para fazer seu pedido
   </div>
+
 </section>
 
-<section id="optionsScreen" class="screen">
-  <button class="back" onclick="goBack()">← Voltar para os produtos</button>
-  <h1 id="productTitle">Personalize seu pedido</h1>
-  <div class="subtitle">Escolha quantos complementos quiser.</div>
 
-  <div class="box">
-    <h2>Complementos</h2>
-    <div class="hint">Os 3 primeiros complementos são grátis. A partir do 4º, cada adicional custa R$ 2,50.</div>
-    <div class="options">
-      <div class="option" data-name="Granulado"><span class="option-left">🍫 Granulado</span><div class="controls"><span class="badge free">GRÁTIS até 3</span><button onclick="changeQty(this,-1)">−</button><b class="qty">0</b><button onclick="changeQty(this,1)">+</button></div></div>
-      <div class="option" data-name="Ovomaltine"><span class="option-left">🍪 Ovomaltine</span><div class="controls"><span class="badge free">GRÁTIS até 3</span><button onclick="changeQty(this,-1)">−</button><b class="qty">0</b><button onclick="changeQty(this,1)">+</button></div></div>
-      <div class="option" data-name="Amendoim"><span class="option-left">🥜 Amendoim</span><div class="controls"><span class="badge free">GRÁTIS até 3</span><button onclick="changeQty(this,-1)">−</button><b class="qty">0</b><button onclick="changeQty(this,1)">+</button></div></div>
-      <div class="option" data-name="Paçoca"><span class="option-left">🍪 Paçoca</span><div class="controls"><span class="badge free">GRÁTIS até 3</span><button onclick="changeQty(this,-1)">−</button><b class="qty">0</b><button onclick="changeQty(this,1)">+</button></div></div>
-      <div class="option" data-name="Morango"><span class="option-left">🍓 Morango</span><div class="controls"><span class="badge free">GRÁTIS até 3</span><button onclick="changeQty(this,-1)">−</button><b class="qty">0</b><button onclick="changeQty(this,1)">+</button></div></div>
-      <div class="option" data-name="Nutella"><span class="option-left">🍫 Nutella</span><div class="controls"><span class="badge free">GRÁTIS até 3</span><button onclick="changeQty(this,-1)">−</button><b class="qty">0</b><button onclick="changeQty(this,1)">+</button></div></div>
-      <div class="option" data-name="Confete"><span class="option-left">🍬 Confete</span><div class="controls"><span class="badge free">GRÁTIS até 3</span><button onclick="changeQty(this,-1)">−</button><b class="qty">0</b><button onclick="changeQty(this,1)">+</button></div></div>
+<!-- =====================================================
+     CARDÁPIO
+===================================================== -->
+
+<main id="menuScreen">
+
+<header class="topbar">
+
+  <img
+    src="assets/cabecalho.png"
+    alt="Açaí do Forte"
+  >
+
+  <button
+    class="cartBtn"
+    onclick="openCart()"
+  >
+
+    🛒
+
+    <span>
+      Carrinho
+    </span>
+
+    <span
+      class="cartCount"
+      id="cartCount"
+    >
+      0
+    </span>
+
+  </button>
+
+</header>
+
+
+<div class="content">
+
+
+<!-- =====================================================
+     CATEGORIAS
+===================================================== -->
+
+<aside class="sidebar">
+
+  <div class="sideTitle">
+    Categorias
+  </div>
+
+  <button
+    class="cat active"
+    onclick="selectCategory('Açaí',this)"
+  >
+    🍇 Açaí
+  </button>
+
+  <button
+    class="cat"
+    onclick="selectCategory('Sorvetes',this)"
+  >
+    🍨 Sorvetes
+  </button>
+
+  <button
+    class="cat"
+    onclick="selectCategory('Milkshakes',this)"
+  >
+    🥤 Milkshakes
+  </button>
+
+  <button
+    class="cat"
+    onclick="selectCategory('Complementos',this)"
+  >
+    🍫 Complementos
+  </button>
+
+  <button
+    class="cat"
+    onclick="selectCategory('Bebidas',this)"
+  >
+    🥤 Bebidas
+  </button>
+
+  <button
+    class="cat"
+    onclick="selectCategory('Sobremesas',this)"
+  >
+    🍰 Sobremesas
+  </button>
+
+</aside>
+
+
+<!-- =====================================================
+     PRODUTOS
+===================================================== -->
+
+<section class="productsArea">
+
+  <div class="sectionHead">
+
+    <div>
+
+      <h1 id="categoryTitle">
+        Açaí
+      </h1>
+
+      <p id="categorySubtitle">
+        Monte seu açaí do seu jeito.
+      </p>
+
     </div>
-    <div class="note">💡 Os 3 primeiros complementos, independentemente de quais sejam, são gratuitos. A cobrança começa somente a partir do 4º complemento.</div>
-💡 Demonstração: o sistema considera automaticamente os 3 primeiros itens selecionados como gratuitos e cobra somente os adicionais a partir do 4º.</div>
+
   </div>
 
-  <div class="summary">
-    <div class="total"><small>Total</small><strong id="total">R$ 0,00</strong></div>
-    <button class="btn" onclick="addCart()">Adicionar ao carrinho</button>
-  </div>
+  <div
+    class="grid"
+    id="productGrid"
+  ></div>
+
 </section>
-</main>
+
 </div>
 
+</main>
+
+
+<!-- =====================================================
+     MODAL PRODUTO
+===================================================== -->
+
+<div
+  class="overlay"
+  id="productOverlay"
+  onclick="outsideClose(event,'productOverlay')"
+>
+
+<div class="sheet">
+
+  <div class="handle"></div>
+
+  <div class="sheetTop">
+
+    <div
+      class="sheetVisual"
+      id="modalEmoji"
+    >
+      🍇
+    </div>
+
+    <button
+      class="close"
+      onclick="closeOverlay('productOverlay')"
+    >
+      ×
+    </button>
+
+  </div>
+
+
+  <h2 id="modalName"></h2>
+
+  <div
+    class="sheetDesc"
+    id="modalDesc"
+  ></div>
+
+  <div
+    class="priceLarge"
+    id="modalBasePrice"
+  ></div>
+
+
+  <div class="optionBox">
+
+    <div class="optionTitle">
+      Complementos
+    </div>
+
+    <div class="optionHint">
+
+      Os 3 primeiros complementos são
+      <b>GRÁTIS</b>.
+
+      A partir do 4º,
+      cada unidade custa
+      R$ 2,50.
+
+    </div>
+
+    <div id="optionsList"></div>
+
+  </div>
+
+
+  <div class="sheetFooter">
+
+    <div>
+
+      <small
+        style="
+        color:var(--muted);
+        display:block
+        "
+      >
+        Total
+      </small>
+
+      <strong
+        id="modalTotal"
+        style="
+        font-size:27px;
+        color:var(--wine)
+        "
+      >
+        R$ 0,00
+      </strong>
+
+    </div>
+
+    <button
+      class="primary"
+      onclick="addCurrentProduct()"
+    >
+      Adicionar ao carrinho
+    </button>
+
+  </div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     CARRINHO / CHECKOUT
+===================================================== -->
+
+<div
+  class="overlay"
+  id="cartOverlay"
+  onclick="outsideClose(event,'cartOverlay')"
+>
+
+<div class="sheet cartSheet">
+
+  <div class="handle"></div>
+
+  <button
+    class="backBtn"
+    onclick="closeOverlay('cartOverlay')"
+  >
+    ← Voltar ao cardápio
+  </button>
+
+
+  <h2>
+    Finalizar pedido
+  </h2>
+
+
+  <div class="stepBar">
+
+    <span class="step on"></span>
+    <span class="step on"></span>
+    <span class="step on"></span>
+
+  </div>
+
+
+  <div id="cartItems"></div>
+
+
+  <!-- OBSERVAÇÃO -->
+
+  <label
+    class="formLabel"
+    for="observation"
+  >
+    Observação do pedido
+  </label>
+
+  <textarea
+    id="observation"
+    placeholder="Ex.: retirar algum ingrediente, colocar colher extra, pouco açúcar..."
+  ></textarea>
+
+
+  <!-- COMER AQUI / LEVAR -->
+
+  <label class="formLabel">
+    Como será o pedido?
+  </label>
+
+  <div class="choiceGrid">
+
+    <button
+      class="choice selected"
+      id="eatHere"
+      onclick="setOrderType('Comer aqui')"
+    >
+      🍽️ Comer aqui
+    </button>
+
+    <button
+      class="choice"
+      id="takeAway"
+      onclick="setOrderType('Levar')"
+    >
+      🛍️ Levar
+    </button>
+
+  </div>
+
+
+  <!-- PAGAMENTO -->
+
+  <label class="formLabel">
+    Forma de pagamento
+  </label>
+
+  <div class="payGrid">
+
+    <button
+      class="pay selected"
+      id="pix"
+      onclick="setPayment('PIX')"
+    >
+      PIX
+    </button>
+
+    <button
+      class="pay"
+      id="card"
+      onclick="setPayment('Cartão')"
+    >
+      💳 Cartão
+    </button>
+
+    <button
+      class="pay"
+      id="cash"
+      onclick="setPayment('Dinheiro')"
+    >
+      💵 Dinheiro
+    </button>
+
+  </div>
+
+
+  <div class="totalLine">
+
+    <span>
+      Total do pedido
+    </span>
+
+    <span
+      class="totalValue"
+      id="cartTotal"
+    >
+      R$ 0,00
+    </span>
+
+  </div>
+
+
+  <button
+    class="confirm"
+    onclick="finishOrder()"
+  >
+    Confirmar pedido e pagar
+  </button>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     PEDIDO FINALIZADO
+===================================================== -->
+
+<section
+  class="success"
+  id="successScreen"
+>
+
+<div class="successCard">
+
+  <div class="check">
+    ✓
+  </div>
+
+  <h2>
+    Pedido recebido!
+  </h2>
+
+  <p id="successText">
+    Seu pedido foi enviado para preparo.
+  </p>
+
+  <button
+    class="primary"
+    onclick="resetToMenu()"
+  >
+    Novo pedido
+  </button>
+
+</div>
+
+</section>
+
+
+</div>
+
+
 <script>
-let basePrice=0, productName='', count=0;
 
-function openOptions(name,price){
-  productName=name;basePrice=price;
-  document.getElementById('productTitle').textContent=name;
-  document.getElementById('productsScreen').classList.remove('active');
-  document.getElementById('optionsScreen').classList.add('active');
-  document.querySelectorAll('.qty').forEach(q=>q.textContent='0');
-  updateTotal();
+/* =====================================================
+   PRODUTOS
+===================================================== */
+
+const PRODUCTS = {
+
+  "Açaí":[
+
+    {
+      name:"Açaí 300 ml",
+      price:12,
+      emoji:"🍇",
+      desc:"Açaí cremoso na medida certa para matar a vontade."
+    },
+
+    {
+      name:"Açaí 500 ml",
+      price:17,
+      emoji:"🍇",
+      desc:"Mais açaí, mais sabor. Ideal para caprichar nos complementos."
+    },
+
+    {
+      name:"Açaí 700 ml",
+      price:22,
+      emoji:"🍇",
+      desc:"Tamanho grande para quem gosta de montar um açaí completo."
+    },
+
+    {
+      name:"Açaí na Tigela",
+      price:19,
+      emoji:"🍧",
+      desc:"Açaí servido na tigela, pronto para receber seus complementos."
+    }
+
+  ],
+
+
+  "Sorvetes":[
+
+    {
+      name:"Sorvete 1 Bola",
+      price:8,
+      emoji:"🍨",
+      desc:"Uma bola do seu sabor favorito."
+    },
+
+    {
+      name:"Sorvete 2 Bolas",
+      price:12,
+      emoji:"🍨",
+      desc:"Duas bolas para combinar seus sabores preferidos."
+    },
+
+    {
+      name:"Sorvete 3 Bolas",
+      price:16,
+      emoji:"🍨",
+      desc:"Três bolas para montar uma sobremesa completa."
+    },
+
+    {
+      name:"Copo Especial",
+      price:18,
+      emoji:"🍦",
+      desc:"Sorvete cremoso com espaço para seus complementos."
+    }
+
+  ],
+
+
+  "Milkshakes":[
+
+    {
+      name:"Milkshake Chocolate",
+      price:18,
+      emoji:"🥤",
+      desc:"Milkshake cremoso com muito sabor de chocolate."
+    },
+
+    {
+      name:"Milkshake Morango",
+      price:18,
+      emoji:"🥤",
+      desc:"Cremoso, gelado e com sabor marcante de morango."
+    },
+
+    {
+      name:"Milkshake Ovomaltine",
+      price:20,
+      emoji:"🥤",
+      desc:"Cremoso com crocância e sabor de Ovomaltine."
+    },
+
+    {
+      name:"Milkshake Nutella",
+      price:22,
+      emoji:"🥤",
+      desc:"Uma opção indulgente para os fãs de chocolate e avelã."
+    }
+
+  ],
+
+
+  "Complementos":[
+
+    {
+      name:"Granola",
+      price:4,
+      emoji:"🥣",
+      desc:"Crocante e perfeita para açaí e sorvetes."
+    },
+
+    {
+      name:"Leite em pó",
+      price:4,
+      emoji:"🥛",
+      desc:"Leite em pó cremoso para finalizar."
+    },
+
+    {
+      name:"Ovomaltine",
+      price:5,
+      emoji:"🍪",
+      desc:"Crocância e sabor intenso de chocolate."
+    },
+
+    {
+      name:"Nutella",
+      price:6,
+      emoji:"🍫",
+      desc:"Creme de avelã para deixar seu pedido ainda mais especial."
+    }
+
+  ],
+
+
+  "Bebidas":[
+
+    {
+      name:"Coca-Cola Lata",
+      price:6,
+      emoji:"🥤",
+      desc:"350 ml gelada."
+    },
+
+    {
+      name:"Coca-Cola 2 L",
+      price:12,
+      emoji:"🥤",
+      desc:"Ideal para compartilhar."
+    },
+
+    {
+      name:"Água Mineral",
+      price:4,
+      emoji:"💧",
+      desc:"Água mineral sem gás."
+    },
+
+    {
+      name:"Suco Natural",
+      price:8,
+      emoji:"🧃",
+      desc:"Suco natural gelado."
+    }
+
+  ],
+
+
+  "Sobremesas":[
+
+    {
+      name:"Pudim",
+      price:9,
+      emoji:"🍮",
+      desc:"Pudim cremoso com calda de caramelo."
+    },
+
+    {
+      name:"Brownie com Sorvete",
+      price:16,
+      emoji:"🍫",
+      desc:"Brownie quentinho acompanhado de sorvete."
+    },
+
+    {
+      name:"Banana Split",
+      price:18,
+      emoji:"🍌",
+      desc:"Banana, sorvete e complementos em uma sobremesa clássica."
+    },
+
+    {
+      name:"Taça Especial",
+      price:20,
+      emoji:"🍨",
+      desc:"Uma combinação generosa de sabores e complementos."
+    }
+
+  ]
+
+};
+
+
+/* =====================================================
+   COMPLEMENTOS
+===================================================== */
+
+const COMPLEMENTS=[
+
+  "Granulado",
+  "Ovomaltine",
+  "Amendoim",
+  "Paçoca",
+  "Morango",
+  "Nutella",
+  "Confete",
+  "Leite em pó"
+
+];
+
+
+/* =====================================================
+   VARIÁVEIS
+===================================================== */
+
+let currentCategory="Açaí";
+
+let currentProduct=null;
+
+let quantities={};
+
+let cart=[];
+
+let orderType="Comer aqui";
+
+let payment="PIX";
+
+
+/* =====================================================
+   FORMATAÇÃO
+===================================================== */
+
+const money = value => {
+
+  return "R$ "
+    + value
+      .toFixed(2)
+      .replace(".",",");
+
+};
+
+
+/* =====================================================
+   INICIALIZAÇÃO
+===================================================== */
+
+function init(){
+
+  document
+    .getElementById("idleScreen")
+    .addEventListener(
+      "click",
+      openMenu
+    );
+
+  renderProducts();
+
 }
 
-function changeQty(button, delta){
-  const option=button.closest('.option');
-  const qtyEl=option.querySelector('.qty');
-  let qty=parseInt(qtyEl.textContent)||0;
-  qty=Math.max(0,qty+delta);
-  qtyEl.textContent=qty;
-  updateTotal();
+
+/* =====================================================
+   ABRIR CARDÁPIO
+===================================================== */
+
+function openMenu(){
+
+  document
+    .getElementById("idleScreen")
+    .classList
+    .add("open");
+
+  setTimeout(()=>{
+
+    document
+      .getElementById("menuScreen")
+      .classList
+      .add("visible");
+
+  },300);
+
 }
 
-function updateTotal(){
-  let selected=0;
-  document.querySelectorAll('.qty').forEach(q=>selected+=parseInt(q.textContent)||0);
-  const paid=Math.max(0,selected-3)*2.5;
-  document.getElementById('total').textContent='R$ '+(basePrice+paid).toFixed(2).replace('.',',');
+
+/* =====================================================
+   CATEGORIA
+===================================================== */
+
+function selectCategory(category,button){
+
+  currentCategory=category;
+
+  document
+    .querySelectorAll(".cat")
+    .forEach(
+      element =>
+      element.classList.remove("active")
+    );
+
+  button.classList.add("active");
+
+  document
+    .getElementById("categoryTitle")
+    .textContent=category;
+
+
+  const subtitles={
+
+    "Açaí":
+      "Monte seu açaí do seu jeito.",
+
+    "Sorvetes":
+      "Escolha seus sabores favoritos.",
+
+    "Milkshakes":
+      "Cremosos, gelados e irresistíveis.",
+
+    "Complementos":
+      "Adicione extras ao seu pedido.",
+
+    "Bebidas":
+      "Para acompanhar seu pedido.",
+
+    "Sobremesas":
+      "Finalize com uma sobremesa especial."
+
+  };
+
+
+  document
+    .getElementById("categorySubtitle")
+    .textContent=
+      subtitles[category];
+
+
+  renderProducts();
+
 }
 
-function goBack(){
-  document.getElementById('optionsScreen').classList.remove('active');
-  document.getElementById('productsScreen').classList.add('active');
+
+/* =====================================================
+   RENDERIZA PRODUTOS
+===================================================== */
+
+function renderProducts(){
+
+  const grid=
+    document.getElementById(
+      "productGrid"
+    );
+
+
+  grid.innerHTML=
+    PRODUCTS[currentCategory]
+    .map(
+      (product,index)=>`
+
+      <article
+        class="product"
+        onclick="openProduct(${index})"
+      >
+
+        <div class="productVisual">
+          ${product.emoji}
+        </div>
+
+        <h3>
+          ${product.name}
+        </h3>
+
+        <p>
+          ${product.desc}
+        </p>
+
+        <div class="productBottom">
+
+          <span class="price">
+            ${money(product.price)}
+          </span>
+
+          <button
+            class="addMini"
+            aria-label="Adicionar"
+          >
+            +
+          </button>
+
+        </div>
+
+      </article>
+
+      `
+    )
+    .join("");
+
 }
 
-function addCart(){
-  let selected=0;
-  document.querySelectorAll('.qty').forEach(q=>selected+=parseInt(q.textContent)||0);
-  if(selected===0){ alert('Selecione pelo menos um complemento.'); return; }
-  count++;
-  document.getElementById('cartCount').textContent=count;
-  alert(productName+' adicionado ao carrinho com '+selected+' complemento(s).');
+
+/* =====================================================
+   ABRIR PRODUTO
+===================================================== */
+
+function openProduct(index){
+
+  currentProduct=
+    PRODUCTS[currentCategory][index];
+
+  quantities={};
+
+
+  document
+    .getElementById("modalEmoji")
+    .textContent=
+      currentProduct.emoji;
+
+
+  document
+    .getElementById("modalName")
+    .textContent=
+      currentProduct.name;
+
+
+  document
+    .getElementById("modalDesc")
+    .textContent=
+      currentProduct.desc;
+
+
+  document
+    .getElementById("modalBasePrice")
+    .textContent=
+      money(currentProduct.price);
+
+
+  renderOptions();
+
+  updateModalTotal();
+
+
+  document
+    .getElementById("productOverlay")
+    .classList
+    .add("show");
+
 }
+
+
+/* =====================================================
+   COMPLEMENTOS NO PRODUTO
+===================================================== */
+
+function renderOptions(){
+
+  document
+    .getElementById("optionsList")
+    .innerHTML=
+
+    COMPLEMENTS
+    .map(
+      (name,index)=>`
+
+      <div class="optRow">
+
+        <span class="optName">
+          ${name}
+        </span>
+
+        <div class="qty">
+
+          <span class="badge">
+            GRÁTIS até 3
+          </span>
+
+          <button
+            onclick="changeOption('${name}',-1)"
+          >
+            −
+          </button>
+
+          <b id="q-${index}">
+            0
+          </b>
+
+          <button
+            onclick="changeOption('${name}',1)"
+          >
+            +
+          </button>
+
+        </div>
+
+      </div>
+
+      `
+    )
+    .join("");
+
+}
+
+
+/* =====================================================
+   ALTERAR QUANTIDADE
+===================================================== */
+
+function changeOption(name,delta){
+
+  quantities[name]=
+    Math.max(
+      0,
+      (quantities[name]||0)+delta
+    );
+
+
+  const index=
+    COMPLEMENTS.indexOf(name);
+
+
+  document
+    .getElementById("q-"+index)
+    .textContent=
+      quantities[name];
+
+
+  updateModalTotal();
+
+}
+
+
+/* =====================================================
+   TOTAL DOS COMPLEMENTOS
+===================================================== */
+
+function complementTotals(){
+
+  const units=
+    Object
+      .values(quantities)
+      .reduce(
+        (total,value)=>
+          total+value,
+        0
+      );
+
+
+  const paid=
+    Math.max(
+      0,
+      units-3
+    )*2.5;
+
+
+  return {
+    units,
+    paid
+  };
+
+}
+
+
+/* =====================================================
+   ATUALIZA TOTAL
+===================================================== */
+
+function updateModalTotal(){
+
+  if(!currentProduct)
+    return;
+
+
+  const {paid}=
+    complementTotals();
+
+
+  document
+    .getElementById("modalTotal")
+    .textContent=
+      money(
+        currentProduct.price+paid
+      );
+
+}
+
+
+/* =====================================================
+   ADICIONAR PRODUTO
+===================================================== */
+
+function addCurrentProduct(){
+
+  const {
+    units,
+    paid
+  }=
+    complementTotals();
+
+
+  cart.push({
+
+    name:
+      currentProduct.name,
+
+    emoji:
+      currentProduct.emoji,
+
+    base:
+      currentProduct.price,
+
+    complementPaid:
+      paid,
+
+    units,
+
+    qty:1,
+
+    complements:
+      Object
+        .entries(quantities)
+        .filter(
+          ([name,quantity])=>
+            quantity>0
+        )
+        .map(
+          ([name,quantity])=>
+            `${name} x${quantity}`
+        )
+
+  });
+
+
+  closeOverlay(
+    "productOverlay"
+  );
+
+
+  updateCartCount();
+
+}
+
+
+/* =====================================================
+   CONTADOR DO CARRINHO
+===================================================== */
+
+function updateCartCount(){
+
+  document
+    .getElementById("cartCount")
+    .textContent=
+
+    cart.reduce(
+      (total,item)=>
+        total+item.qty,
+      0
+    );
+
+}
+
+
+/* =====================================================
+   TOTAL DO CARRINHO
+===================================================== */
+
+function cartTotal(){
+
+  return cart.reduce(
+
+    (total,item)=>
+
+      total+
+      (
+        item.base+
+        item.complementPaid
+      )*
+      item.qty,
+
+    0
+
+  );
+
+}
+
+
+/* =====================================================
+   ABRIR CARRINHO
+===================================================== */
+
+function openCart(){
+
+  if(cart.length===0){
+
+    alert(
+      "Seu carrinho está vazio. Escolha um produto primeiro."
+    );
+
+    return;
+
+  }
+
+
+  renderCart();
+
+
+  document
+    .getElementById("cartOverlay")
+    .classList
+    .add("show");
+
+}
+
+
+/* =====================================================
+   RENDERIZAR CARRINHO
+===================================================== */
+
+function renderCart(){
+
+  document
+    .getElementById("cartItems")
+    .innerHTML=
+
+    cart
+    .map(
+      (item,index)=>`
+
+      <div class="cartItem">
+
+        <div class="cartEmoji">
+          ${item.emoji}
+        </div>
+
+        <div class="cartInfo">
+
+          <strong>
+            ${item.name}
+            × ${item.qty}
+          </strong>
+
+          <small>
+
+            ${
+              item.complements.length
+              ?
+              item.complements.join(", ")
+              :
+              "Sem complementos"
+            }
+
+          </small>
+
+        </div>
+
+        <div class="cartPrice">
+
+          ${
+            money(
+              (
+                item.base+
+                item.complementPaid
+              )*
+              item.qty
+            )
+          }
+
+        </div>
+
+      </div>
+
+      `
+    )
+    .join("");
+
+
+  document
+    .getElementById("cartTotal")
+    .textContent=
+      money(cartTotal());
+
+}
+
+
+/* =====================================================
+   COMER AQUI / LEVAR
+===================================================== */
+
+function setOrderType(type){
+
+  orderType=type;
+
+
+  document
+    .getElementById("eatHere")
+    .classList
+    .toggle(
+      "selected",
+      type==="Comer aqui"
+    );
+
+
+  document
+    .getElementById("takeAway")
+    .classList
+    .toggle(
+      "selected",
+      type==="Levar"
+    );
+
+}
+
+
+/* =====================================================
+   PAGAMENTO
+===================================================== */
+
+function setPayment(method){
+
+  payment=method;
+
+
+  [
+    "pix",
+    "card",
+    "cash"
+  ]
+  .forEach(
+    id=>
+      document
+        .getElementById(id)
+        .classList
+        .remove("selected")
+  );
+
+
+  const selected=
+
+    method==="PIX"
+      ?
+      "pix"
+      :
+      method==="Cartão"
+        ?
+        "card"
+        :
+        "cash";
+
+
+  document
+    .getElementById(selected)
+    .classList
+    .add("selected");
+
+}
+
+
+/* =====================================================
+   FINALIZAR PEDIDO
+===================================================== */
+
+function finishOrder(){
+
+  if(cart.length===0)
+    return;
+
+
+  const observation=
+    document
+      .getElementById("observation")
+      .value
+      .trim();
+
+
+  const text=
+
+    `${orderType} • `+
+    `Pagamento: ${payment} • `+
+    `Total: ${money(cartTotal())}`+
+    (
+      observation
+      ?
+      " • Observação registrada."
+      :
+      ""
+    );
+
+
+  closeOverlay(
+    "cartOverlay"
+  );
+
+
+  document
+    .getElementById("successText")
+    .textContent=
+
+    text+
+    " Seu pedido foi enviado para preparo.";
+
+
+  document
+    .getElementById("successScreen")
+    .classList
+    .add("show");
+
+}
+
+
+/* =====================================================
+   NOVO PEDIDO
+===================================================== */
+
+function resetToMenu(){
+
+  cart=[];
+
+  quantities={};
+
+  updateCartCount();
+
+
+  document
+    .getElementById("observation")
+    .value="";
+
+
+  document
+    .getElementById("successScreen")
+    .classList
+    .remove("show");
+
+}
+
+
+/* =====================================================
+   FECHAR MODAIS
+===================================================== */
+
+function closeOverlay(id){
+
+  document
+    .getElementById(id)
+    .classList
+    .remove("show");
+
+}
+
+
+function outsideClose(event,id){
+
+  if(
+    event.target.id===id
+  ){
+
+    closeOverlay(id);
+
+  }
+
+}
+
+
+/* =====================================================
+   INICIAR
+===================================================== */
+
+init();
+
 </script>
+
 </body>
 </html>
