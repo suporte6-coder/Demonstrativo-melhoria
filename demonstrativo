@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorveteria — Demonstração</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,Arial,sans-serif;background:#f7f3ef;color:#3d2b24}
+  .app{max-width:1100px;margin:auto;min-height:100vh;background:#fff}
+  header{padding:22px 28px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}
+  .logo{font-size:25px;font-weight:800;color:#b54f45}.cart{background:#f5e4df;padding:10px 15px;border-radius:20px;font-weight:700}
+  .content{padding:32px}
+  h1{margin:0 0 8px;font-size:34px}.subtitle{color:#806e66;margin-bottom:28px}
+  .products{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .product{border:1px solid #eee;border-radius:20px;padding:18px;background:#fff;box-shadow:0 5px 18px #0000000b;cursor:pointer;transition:.2s}
+  .product:hover{transform:translateY(-3px);box-shadow:0 10px 25px #00000012}
+  .icecream{height:170px;border-radius:16px;background:linear-gradient(145deg,#fff1e8,#f6d4c9);display:flex;align-items:center;justify-content:center;font-size:90px}
+  .product h3{margin:15px 0 5px}.product p{margin:0;color:#8b7971}.price{display:block;margin-top:12px;font-weight:800;font-size:18px}
+  .screen{display:none}.screen.active{display:block}
+  .back{border:0;background:none;color:#a64a42;font-weight:700;cursor:pointer;padding:0;margin-bottom:20px;font-size:15px}
+  .box{border:1px solid #eee;border-radius:20px;padding:24px;margin-bottom:18px}
+  .box h2{margin:0 0 5px}.hint{color:#85736b;font-size:14px;margin-bottom:18px}
+  .options{display:grid;gap:10px}
+  .option{display:flex;align-items:center;justify-content:space-between;padding:15px;border:1px solid #e8e0dc;border-radius:13px}
+  .option:hover{background:#faf6f3}.option-left{display:flex;gap:12px;align-items:center;font-weight:600}
+  .controls{display:flex;align-items:center;gap:8px}
+  .controls button{width:30px;height:30px;border:1px solid #d8cbc5;background:#fff;border-radius:8px;font-size:20px;line-height:1;cursor:pointer}
+  .controls button:hover{background:#f5e8e3}
+  .qty{min-width:20px;text-align:center}
+  .badge{font-size:12px;background:#e7f5e9;color:#397441;padding:5px 9px;border-radius:10px;font-weight:700;margin-right:4px}
+  .summary{position:sticky;bottom:0;background:white;border-top:1px solid #eee;padding:18px 0;display:flex;justify-content:space-between;align-items:center}
+  .total small{display:block;color:#8b7971}.total strong{font-size:25px}
+  .btn{background:#b54f45;color:white;border:0;border-radius:13px;padding:14px 22px;font-weight:800;font-size:16px;cursor:pointer}
+  .note{background:#fff8e9;border:1px solid #f3dfad;padding:13px 15px;border-radius:12px;font-size:14px;color:#765c25;margin-top:14px}
+  @media(max-width:750px){.products{grid-template-columns:1fr}.content{padding:20px}header{padding:18px 20px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="logo">🍦 Doce Neve</div><div class="cart">🛒 Carrinho <span id="cartCount">0</span></div></header>
+
+<main class="content">
+<section id="productsScreen" class="screen active">
+  <h1>Escolha seu sorvete</h1>
+  <div class="subtitle">Selecione uma opção para personalizar seu pedido.</div>
+  <div class="products">
+    <div class="product" onclick="openOptions('Açaí na Tigela',18)">
+      <div class="icecream">🍧</div><h3>Açaí na Tigela</h3><p>300 ml</p><span class="price">R$ 18,00</span>
+    </div>
+    <div class="product" onclick="openOptions('Sorvete 2 Bolas',16)">
+      <div class="icecream">🍨</div><h3>Sorvete 2 Bolas</h3><p>Escolha seus sabores</p><span class="price">R$ 16,00</span>
+    </div>
+    <div class="product" onclick="openOptions('Milkshake',22)">
+      <div class="icecream">🥤</div><h3>Milkshake</h3><p>500 ml</p><span class="price">R$ 22,00</span>
+    </div>
+  </div>
+</section>
+
+<section id="optionsScreen" class="screen">
+  <button class="back" onclick="goBack()">← Voltar para os produtos</button>
+  <h1 id="productTitle">Personalize seu pedido</h1>
+  <div class="subtitle">Escolha quantos complementos quiser.</div>
+
+  <div class="box">
+    <h2>Complementos</h2>
+    <div class="hint">Os 3 primeiros complementos são grátis. A partir do 4º, cada adicional custa R$ 2,50.</div>
+    <div class="options">
+      <div class="option" data-name="Granulado"><span class="option-left">🍫 Granulado</span><div class="controls"><span class="badge free">GRÁTIS até 3</span><button onclick="changeQty(this,-1)">−</button><b class="qty">0</b><button onclick="changeQty(this,1)">+</button></div></div>
+      <div class="option" data-name="Ovomaltine"><span class="option-left">🍪 Ovomaltine</span><div class="controls"><span class="badge free">GRÁTIS até 3</span><button onclick="changeQty(this,-1)">−</button><b class="qty">0</b><button onclick="changeQty(this,1)">+</button></div></div>
+      <div class="option" data-name="Amendoim"><span class="option-left">🥜 Amendoim</span><div class="controls"><span class="badge free">GRÁTIS até 3</span><button onclick="changeQty(this,-1)">−</button><b class="qty">0</b><button onclick="changeQty(this,1)">+</button></div></div>
+      <div class="option" data-name="Paçoca"><span class="option-left">🍪 Paçoca</span><div class="controls"><span class="badge free">GRÁTIS até 3</span><button onclick="changeQty(this,-1)">−</button><b class="qty">0</b><button onclick="changeQty(this,1)">+</button></div></div>
+      <div class="option" data-name="Morango"><span class="option-left">🍓 Morango</span><div class="controls"><span class="badge free">GRÁTIS até 3</span><button onclick="changeQty(this,-1)">−</button><b class="qty">0</b><button onclick="changeQty(this,1)">+</button></div></div>
+      <div class="option" data-name="Nutella"><span class="option-left">🍫 Nutella</span><div class="controls"><span class="badge free">GRÁTIS até 3</span><button onclick="changeQty(this,-1)">−</button><b class="qty">0</b><button onclick="changeQty(this,1)">+</button></div></div>
+      <div class="option" data-name="Confete"><span class="option-left">🍬 Confete</span><div class="controls"><span class="badge free">GRÁTIS até 3</span><button onclick="changeQty(this,-1)">−</button><b class="qty">0</b><button onclick="changeQty(this,1)">+</button></div></div>
+    </div>
+    <div class="note">💡 Os 3 primeiros complementos, independentemente de quais sejam, são gratuitos. A cobrança começa somente a partir do 4º complemento.</div>
+💡 Demonstração: o sistema considera automaticamente os 3 primeiros itens selecionados como gratuitos e cobra somente os adicionais a partir do 4º.</div>
+  </div>
+
+  <div class="summary">
+    <div class="total"><small>Total</small><strong id="total">R$ 0,00</strong></div>
+    <button class="btn" onclick="addCart()">Adicionar ao carrinho</button>
+  </div>
+</section>
+</main>
+</div>
+
+<script>
+let basePrice=0, productName='', count=0;
+
+function openOptions(name,price){
+  productName=name;basePrice=price;
+  document.getElementById('productTitle').textContent=name;
+  document.getElementById('productsScreen').classList.remove('active');
+  document.getElementById('optionsScreen').classList.add('active');
+  document.querySelectorAll('.qty').forEach(q=>q.textContent='0');
+  updateTotal();
+}
+
+function changeQty(button, delta){
+  const option=button.closest('.option');
+  const qtyEl=option.querySelector('.qty');
+  let qty=parseInt(qtyEl.textContent)||0;
+  qty=Math.max(0,qty+delta);
+  qtyEl.textContent=qty;
+  updateTotal();
+}
+
+function updateTotal(){
+  let selected=0;
+  document.querySelectorAll('.qty').forEach(q=>selected+=parseInt(q.textContent)||0);
+  const paid=Math.max(0,selected-3)*2.5;
+  document.getElementById('total').textContent='R$ '+(basePrice+paid).toFixed(2).replace('.',',');
+}
+
+function goBack(){
+  document.getElementById('optionsScreen').classList.remove('active');
+  document.getElementById('productsScreen').classList.add('active');
+}
+
+function addCart(){
+  let selected=0;
+  document.querySelectorAll('.qty').forEach(q=>selected+=parseInt(q.textContent)||0);
+  if(selected===0){ alert('Selecione pelo menos um complemento.'); return; }
+  count++;
+  document.getElementById('cartCount').textContent=count;
+  alert(productName+' adicionado ao carrinho com '+selected+' complemento(s).');
+}
+</script>
+</body>
+</html>
